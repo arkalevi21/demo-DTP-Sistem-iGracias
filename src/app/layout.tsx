@@ -9,6 +9,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Sistem Manajemen Digital Talent Program (DTP)",
   description: "Platform digitalisasi administrasi DTP SMK Telkom Sidoarjo",
+  icons: {
+    icon: "/logo-telkom.png",
+  },
 };
 
 export default function RootLayout({
