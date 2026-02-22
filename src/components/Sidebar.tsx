@@ -29,13 +29,8 @@ const MENUS: Record<UserRole, { name: string; href: string; icon: any }[]> = {
   admin: [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
     { name: 'Input Kurikulum', href: '/planner', icon: FileEdit },
-    { name: 'Jadwal Mengajar', href: '/schedule', icon: ClipboardList },
-    { name: 'Jurnal & Logbook', href: '/jurnal', icon: BookOpen },
-    { name: 'Riwayat Jurnal', href: '/jurnal/history', icon: History },
     { name: 'Student Mapping', href: '/students', icon: Users },
     { name: 'Presensi', href: '/attendance', icon: CheckSquare },
-    { name: 'Competition Track', href: '/competition', icon: Award },
-    { name: 'Galeri Karya', href: '/gallery', icon: ImageIcon },
     { name: 'Laporan Bidang', href: '/reports', icon: BarChart3 },
     { name: 'Payroll Report', href: '/payroll', icon: DollarSign },
     { name: 'Kelola User', href: '/users', icon: UserCog },

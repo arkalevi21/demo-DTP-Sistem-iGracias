@@ -68,4 +68,35 @@ export const STUDENTS_DATA: Student[] = [
         attendance: 99, journal: { green: 18, yellow: 2, red: 0 }, avgScore: 95,
         projectCount: 10, hasInternship: true
     },
+    // Kelas XII
+    {
+        id: '11', name: 'Rizky Pratama', class: 'XII DTP 1', avatar: 'Rizky+Pratama',
+        attendance: 97, journal: { green: 22, yellow: 3, red: 0 }, avgScore: 93,
+        projectCount: 7, hasInternship: true
+    },
+    {
+        id: '12', name: 'Anisa Rahma', class: 'XII DTP 1', avatar: 'Anisa+Rahma',
+        attendance: 92, journal: { green: 16, yellow: 5, red: 1 }, avgScore: 86,
+        projectCount: 4, hasInternship: true
+    },
+    {
+        id: '13', name: 'Bayu Setiawan', class: 'XII DTP 2', avatar: 'Bayu+Setiawan',
+        attendance: 88, journal: { green: 10, yellow: 8, red: 2 }, avgScore: 80,
+        projectCount: 3, hasInternship: false
+    },
+    {
+        id: '14', name: 'Dinda Ayu', class: 'XII DTP 1', avatar: 'Dinda+Ayu',
+        attendance: 94, journal: { green: 18, yellow: 4, red: 0 }, avgScore: 89,
+        projectCount: 6, hasInternship: true
+    },
+    {
+        id: '15', name: 'Farhan Maulana', class: 'XII DTP 2', avatar: 'Farhan+Maulana',
+        attendance: 72, journal: { green: 5, yellow: 6, red: 7 }, avgScore: 58,
+        projectCount: 1, hasInternship: false
+    },
+    {
+        id: '16', name: 'Siti Nurhaliza', class: 'XII DTP 2', avatar: 'Siti+Nurhaliza',
+        attendance: 91, journal: { green: 14, yellow: 6, red: 1 }, avgScore: 84,
+        projectCount: 5, hasInternship: true
+    },
 ];
