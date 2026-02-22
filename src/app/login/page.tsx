@@ -43,7 +43,7 @@ export default function LoginPage() {
                         </div>
                         <h1 className="text-4xl font-bold mb-4 leading-tight">
                             Digital Talent Program <br />
-                            <span className="text-brand-accent">Management System</span>
+                            <span className="text-neutral-800">Management System</span>
                         </h1>
                         <p className="text-red-100/80 text-lg max-w-md">
                             Platform terintegrasi untuk monitoring perkembangan talenta digital SMK Telkom Sidoarjo.

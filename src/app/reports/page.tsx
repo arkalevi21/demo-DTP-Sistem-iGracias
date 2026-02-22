@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { BarChart3, Users, TrendingUp, AlertCircle, CheckCircle2, Search, Filter } from 'lucide-react';
+import { BarChart3, Users, TrendingUp, AlertCircle, CheckCircle2, Search } from 'lucide-react';
 import clsx from 'clsx';
 
 // Types

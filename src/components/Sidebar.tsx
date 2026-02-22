@@ -15,7 +15,12 @@ import {
   LogOut,
   FileEdit,
   BarChart3,
-  X
+  X,
+  ClipboardList,
+  CheckSquare,
+  UserCog,
+  Bell,
+  History
 } from 'lucide-react';
 import clsx from 'clsx';
 import { useSidebar, UserRole } from './SidebarContext';
@@ -24,16 +29,22 @@ const MENUS: Record<UserRole, { name: string; href: string; icon: any }[]> = {
   admin: [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
     { name: 'Input Kurikulum', href: '/planner', icon: FileEdit },
+    { name: 'Jadwal Mengajar', href: '/schedule', icon: ClipboardList },
     { name: 'Jurnal & Logbook', href: '/jurnal', icon: BookOpen },
+    { name: 'Riwayat Jurnal', href: '/jurnal/history', icon: History },
     { name: 'Student Mapping', href: '/students', icon: Users },
+    { name: 'Presensi', href: '/attendance', icon: CheckSquare },
     { name: 'Competition Track', href: '/competition', icon: Award },
     { name: 'Galeri Karya', href: '/gallery', icon: ImageIcon },
     { name: 'Laporan Bidang', href: '/reports', icon: BarChart3 },
     { name: 'Payroll Report', href: '/payroll', icon: DollarSign },
+    { name: 'Kelola User', href: '/users', icon: UserCog },
   ],
   industry_mentor: [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+    { name: 'Jadwal Mengajar', href: '/schedule', icon: ClipboardList },
     { name: 'Jurnal Mengajar', href: '/jurnal', icon: BookOpen },
+    { name: 'Riwayat Jurnal', href: '/jurnal/history', icon: History },
     { name: 'Planning Materi', href: '/planner', icon: Calendar },
     { name: 'Payroll Saya', href: '/payroll', icon: DollarSign },
     { name: 'Galeri Karya', href: '/gallery', icon: ImageIcon },
@@ -41,14 +52,19 @@ const MENUS: Record<UserRole, { name: string; href: string; icon: any }[]> = {
   internal_mentor: [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
     { name: 'Planning Materi', href: '/planner', icon: Calendar },
+    { name: 'Jadwal Mengajar', href: '/schedule', icon: ClipboardList },
     { name: 'Monitoring Siswa', href: '/students', icon: Users },
+    { name: 'Presensi', href: '/attendance', icon: CheckSquare },
     { name: 'Jurnal Kelas', href: '/jurnal', icon: BookOpen },
+    { name: 'Riwayat Jurnal', href: '/jurnal/history', icon: History },
     { name: 'Competition', href: '/competition', icon: Award },
     { name: 'Laporan Bidang', href: '/reports', icon: BarChart3 },
     { name: 'Galeri Project', href: '/gallery', icon: ImageIcon },
   ],
   student: [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+    { name: 'Jadwal Saya', href: '/schedule', icon: ClipboardList },
+    { name: 'Presensi Saya', href: '/attendance', icon: CheckSquare },
     { name: 'Galeri Sekolah', href: '/gallery', icon: BookOpen },
     { name: 'Kelola Portofolio', href: '/portfolio', icon: ImageIcon },
     { name: 'Lomba & Project', href: '/competition', icon: Award },
@@ -100,7 +116,7 @@ export default function Sidebar() {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-3 py-4">
+        <div className="flex-1 overflow-y-auto px-3 py-4 min-h-0">
           <div className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-neutral-400">
             Menu Utama
           </div>
@@ -148,7 +164,7 @@ export default function Sidebar() {
           </div>
         </div>
 
-        <div className="border-t border-neutral-200 bg-white p-4 shrink-0">
+        <div className="border-t border-neutral-200 bg-white p-4 shrink-0 max-h-[180px]">
           <div className="flex items-center gap-3 mb-3">
             <Link href="/settings" className="flex items-center gap-3 w-full hover:bg-neutral-50 rounded-lg p-2 -ml-2 transition-colors group">
               <div className={`h-9 w-9 overflow-hidden rounded-full relative ${currentRole === 'admin' ? 'bg-brand-red/10' :

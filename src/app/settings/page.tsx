@@ -34,22 +34,35 @@ const ACCESS_RIGHTS: Record<UserRole, string[]> = {
     ]
 };
 
+const USER_INFO: Record<UserRole, { name: string; role: string; avatar: string }> = {
+    admin: { name: 'Admin DTP', role: 'Super Admin', avatar: 'Admin+DTP' },
+    industry_mentor: { name: 'Pak Bagus', role: 'Pengajar Industri', avatar: 'Bagus+Santoso' },
+    internal_mentor: { name: 'Bu Rina', role: 'Pengajar Internal', avatar: 'Rina+Wati' },
+    student: { name: 'Arka Levi', role: 'Siswa XI RPL 1', avatar: 'Arka+Levi' },
+};
+
 export default function SettingsPage() {
     const { userRole } = useSidebar(); // Access global user role context
     // Determine current role based on context or default to 'student' if undefined
     // Similar logic to Sidebar.tsx
     const currentRole = userRole || 'admin';
     const accessList = ACCESS_RIGHTS[currentRole];
+    const currentUser = USER_INFO[currentRole];
 
     const [passwordData, setPasswordData] = useState({ old: '', new: '', confirm: '' });
-    const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+    const [status, setStatus] = useState<'idle' | 'success' | 'error' | 'mismatch'>('idle');
 
     const handleSavePassword = (e: React.FormEvent) => {
         e.preventDefault();
         setStatus('idle');
 
-        if (!passwordData.new || !passwordData.confirm) {
+        if (!passwordData.old || !passwordData.new || !passwordData.confirm) {
             setStatus('error');
+            return;
+        }
+
+        if (passwordData.new !== passwordData.confirm) {
+            setStatus('mismatch');
             return;
         }
 
@@ -61,7 +74,7 @@ export default function SettingsPage() {
     };
 
     return (
-        <div className="max-w-4xl mx-auto pb-20 space-y-8">
+        <div className="max-w-6xl mx-auto pb-20 space-y-8">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-neutral-900">User Settings & Profile</h1>
@@ -77,13 +90,14 @@ export default function SettingsPage() {
                         <div className="h-24 w-24 mx-auto bg-neutral-100 rounded-full relative mb-4 overflow-hidden border-4 border-white shadow-lg">
                             {/* Note: Simplified avatar logic for demo */}
                             <Image
-                                src={`https://ui-avatars.com/api/?name=${currentRole}&background=random&size=128`}
+                                src={`https://ui-avatars.com/api/?name=${currentUser.avatar}&background=random&size=128`}
                                 alt="Profile"
                                 fill
                                 className="object-cover"
                             />
                         </div>
-                        <h2 className="text-xl font-bold text-neutral-900 capitalize">{currentRole.replace('_', ' ')}</h2>
+                        <h2 className="text-xl font-bold text-neutral-900">{currentUser.name}</h2>
+                        <p className="text-sm text-neutral-500">{currentUser.role}</p>
                         <span className="inline-block px-3 py-1 rounded-full bg-neutral-100 text-neutral-600 text-xs font-bold mt-2 uppercase tracking-wide">
                             Active User
                         </span>
@@ -177,6 +191,12 @@ export default function SettingsPage() {
                             {status === 'error' && (
                                 <div className="p-3 bg-red-50 text-red-700 text-sm rounded-lg flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
                                     <AlertTriangle className="h-4 w-4" /> Mohon lengkapi semua field.
+                                </div>
+                            )}
+
+                            {status === 'mismatch' && (
+                                <div className="p-3 bg-amber-50 text-amber-700 text-sm rounded-lg flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+                                    <AlertTriangle className="h-4 w-4" /> Password baru dan konfirmasi tidak sama.
                                 </div>
                             )}
                         </form>

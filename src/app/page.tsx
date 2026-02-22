@@ -23,12 +23,12 @@ export default function Home() {
   if (userRole === 'admin') {
     return (
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-neutral-900">Dashboard Overview</h1>
             <p className="text-neutral-500">Selamat datang kembali, Admin DTP.</p>
           </div>
-          <button className="px-4 py-2 bg-brand-red text-white rounded-lg text-sm font-medium hover:bg-brand-dark transition-colors shadow-sm shadow-red-200">
+          <button className="w-full sm:w-auto px-4 py-2 bg-brand-red text-white rounded-lg text-sm font-medium hover:bg-brand-dark transition-colors shadow-sm shadow-red-200">
             Download Laporan
           </button>
         </div>
@@ -61,14 +61,18 @@ export default function Home() {
           <div className="bg-white p-6 rounded-xl border border-neutral-200 shadow-sm">
             <h3 className="font-bold text-neutral-900 mb-4">Aktivitas Terbaru</h3>
             <div className="space-y-4">
-              {[1, 2, 3].map((_, i) => (
+              {[
+                { initials: 'AR', name: 'Ahmad Rizky mengisi Jurnal Fiber Optic', time: 'Baru saja', kelas: 'XI RPL 1' },
+                { initials: 'BS', name: 'Budi Santoso submit Portfolio Website', time: '5 menit lalu', kelas: 'XI RPL 2' },
+                { initials: 'CD', name: 'Citra Dewi mendaftar LKS Web Tech', time: '15 menit lalu', kelas: 'XI RPL 1' }
+              ].map((activity, i) => (
                 <div key={i} className="flex items-start gap-4 pb-4 border-b border-neutral-100 last:border-0 last:pb-0">
                   <div className="h-10 w-10 rounded-full bg-neutral-100 flex items-center justify-center shrink-0">
-                    <span className="text-xs font-bold text-neutral-600">JD</span>
+                    <span className="text-xs font-bold text-neutral-600">{activity.initials}</span>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-neutral-900">John Doe mengisi Jurnal Fundamental Web</p>
-                    <p className="text-xs text-neutral-500">Baru saja • Kelas X RPL 1</p>
+                    <p className="text-sm font-medium text-neutral-900">{activity.name}</p>
+                    <p className="text-xs text-neutral-500">{activity.time} • Kelas {activity.kelas}</p>
                   </div>
                 </div>
               ))}

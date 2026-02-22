@@ -156,7 +156,7 @@ export default function PortfolioManagerPage() {
                                 <span key={skill} className="px-2 py-1 bg-neutral-100 text-neutral-600 text-[10px] font-bold rounded-full flex items-center gap-1 group">
                                     {skill}
                                     {isEditingProfile && (
-                                        <button onClick={() => handleRemoveSkill(skill)} className="hover:text-red-600"><Trash2 className="h-2 w-2" /></button>
+                                        <button onClick={() => handleRemoveSkill(skill)} className="hover:text-red-600" aria-label={`Hapus skill ${skill}`}><Trash2 className="h-2 w-2" /></button>
                                     )}
                                 </span>
                             ))}
@@ -232,13 +232,14 @@ export default function PortfolioManagerPage() {
                                         </div>
                                     </div>
                                     <div className="flex flex-col gap-2 shrink-0">
-                                        <button className="p-2 text-neutral-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
+                                        <button className="p-2 text-neutral-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit" aria-label={`Edit project ${project.title}`}>
                                             <Edit2 className="h-4 w-4" />
                                         </button>
                                         <button
                                             onClick={() => handleDeleteProject(project.id)}
                                             className="p-2 text-neutral-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                             title="Hapus"
+                                            aria-label={`Hapus project ${project.title}`}
                                         >
                                             <Trash2 className="h-4 w-4" />
                                         </button>

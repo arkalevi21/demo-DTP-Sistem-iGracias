@@ -1,7 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import { ExternalLink, Github, Figma, Eye, Heart } from 'lucide-react';
+import clsx from 'clsx';
 
 const PROJECTS = [
     {
@@ -62,11 +64,32 @@ const PROJECTS = [
         description: 'Landing page promosi kedai kopi dengan animasi scroll yang menarik.',
         image: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=80&w=800',
         tags: ['HTML', 'CSS', 'GSAP'],
-        links: { github: '#', demo: '#' }
+        links: { github: '#', demo: '#' },
+        likes: 18,
+        views: 97
     }
 ];
 
+const ALL_CLASSES = ['Semua Kelas', 'XI RPL 1', 'XI RPL 2'];
+const ALL_CATEGORIES = ['Semua Kategori', 'Web Dev', 'Mobile Dev', 'UI/UX', 'IoT'];
+
 export default function GalleryPage() {
+    const [classFilter, setClassFilter] = useState('Semua Kelas');
+    const [categoryFilter, setCategoryFilter] = useState('Semua Kategori');
+
+    const CATEGORY_MAP: Record<string, string[]> = {
+        'Web Dev': ['React', 'Tailwind', 'Recharts', 'Next.js', 'HTML', 'CSS', 'GSAP', 'Vue.js', 'Laravel', 'MySQL'],
+        'Mobile Dev': ['Flutter', 'Dart', 'Firebase'],
+        'UI/UX': ['Figma', 'UI/UX', 'Mobile Design'],
+        'IoT': ['IoT', 'MQTT']
+    };
+
+    const filteredProjects = PROJECTS.filter(project => {
+        const matchesClass = classFilter === 'Semua Kelas' || project.class === classFilter;
+        const matchesCategory = categoryFilter === 'Semua Kategori' ||
+            (CATEGORY_MAP[categoryFilter]?.some(tag => project.tags.includes(tag)) ?? false);
+        return matchesClass && matchesCategory;
+    });
     return (
         <div className="space-y-8">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -75,22 +98,25 @@ export default function GalleryPage() {
                     <p className="text-neutral-500">Showcase project terbaik dari talenta digital SMK Telkom Sidoarjo.</p>
                 </div>
                 <div className="flex gap-2">
-                    <select className="px-4 py-2 bg-white border border-neutral-200 rounded-lg text-sm text-neutral-600 focus:outline-none focus:ring-2 focus:ring-red-500">
-                        <option>Semua Kelas</option>
-                        <option>XI RPL 1</option>
-                        <option>XI RPL 2</option>
+                    <select
+                        value={classFilter}
+                        onChange={(e) => setClassFilter(e.target.value)}
+                        className="px-4 py-2 bg-white border border-neutral-200 rounded-lg text-sm text-neutral-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                        {ALL_CLASSES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
-                    <select className="px-4 py-2 bg-white border border-neutral-200 rounded-lg text-sm text-neutral-600 focus:outline-none focus:ring-2 focus:ring-red-500">
-                        <option>Semua Kategori</option>
-                        <option>Web Dev</option>
-                        <option>Mobile Dev</option>
-                        <option>UI/UX</option>
+                    <select
+                        value={categoryFilter}
+                        onChange={(e) => setCategoryFilter(e.target.value)}
+                        className="px-4 py-2 bg-white border border-neutral-200 rounded-lg text-sm text-neutral-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                        {ALL_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {PROJECTS.map((project) => (
+                {filteredProjects.length > 0 ? filteredProjects.map((project) => (
                     <div key={project.id} className="group bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
                         <div className="relative aspect-video overflow-hidden bg-neutral-100">
                             <Image
@@ -102,19 +128,19 @@ export default function GalleryPage() {
                             />
                             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
                                 {project.links.demo && (
-                                    <button className="p-2 bg-white rounded-full text-neutral-900 hover:text-red-600 hover:scale-110 transition-all" title="View Demo">
+                                    <a href={project.links.demo} target="_blank" rel="noopener noreferrer" className="p-2 bg-white rounded-full text-neutral-900 hover:text-red-600 hover:scale-110 transition-all" title="View Demo">
                                         <ExternalLink className="h-5 w-5" />
-                                    </button>
+                                    </a>
                                 )}
                                 {project.links.github && (
-                                    <button className="p-2 bg-white rounded-full text-neutral-900 hover:text-red-600 hover:scale-110 transition-all" title="View Code">
+                                    <a href={project.links.github} target="_blank" rel="noopener noreferrer" className="p-2 bg-white rounded-full text-neutral-900 hover:text-red-600 hover:scale-110 transition-all" title="View Code">
                                         <Github className="h-5 w-5" />
-                                    </button>
+                                    </a>
                                 )}
                                 {project.links.figma && (
-                                    <button className="p-2 bg-white rounded-full text-neutral-900 hover:text-red-600 hover:scale-110 transition-all" title="View Design">
+                                    <a href={project.links.figma} target="_blank" rel="noopener noreferrer" className="p-2 bg-white rounded-full text-neutral-900 hover:text-red-600 hover:scale-110 transition-all" title="View Design">
                                         <Figma className="h-5 w-5" />
-                                    </button>
+                                    </a>
                                 )}
                             </div>
                         </div>
@@ -142,17 +168,21 @@ export default function GalleryPage() {
                             <div className="pt-4 border-t border-neutral-100 flex items-center justify-between text-neutral-400">
                                 <div className="flex items-center gap-4 text-xs">
                                     <span className="flex items-center gap-1 hover:text-rose-500 cursor-pointer transition-colors">
-                                        <Heart className="h-4 w-4" /> 24
+                                        <Heart className="h-4 w-4" /> {project.likes}
                                     </span>
                                     <span className="flex items-center gap-1">
-                                        <Eye className="h-4 w-4" /> 142
+                                        <Eye className="h-4 w-4" /> {project.views}
                                     </span>
                                 </div>
                                 <button className="text-sm text-red-600 font-medium hover:underline">Detail Project</button>
                             </div>
                         </div>
                     </div>
-                ))}
+                )) : (
+                    <div className="col-span-full text-center py-20 border-2 border-dashed border-neutral-200 rounded-xl bg-neutral-50">
+                        <p className="text-neutral-500 font-medium">Tidak ada project ditemukan untuk filter ini.</p>
+                    </div>
+                )}
             </div>
         </div>
     );

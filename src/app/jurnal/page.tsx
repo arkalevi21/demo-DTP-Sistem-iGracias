@@ -91,6 +91,19 @@ export default function JurnalPage() {
     const [candidates, setCandidates] = useState<Record<string, boolean>>({});
     const [recovery, setRecovery] = useState<Record<string, boolean>>({});
 
+    const handleSessionTypeChange = (type: SessionType) => {
+        setSessionType(type);
+        // Clear the other mode's state to prevent stale data
+        if (type === 'regular') {
+            setCompetency({});
+            setPortfolio({});
+            setCandidates({});
+            setRecovery({});
+        } else {
+            setAttendance({});
+        }
+    };
+
     const handleNextStep = () => {
         if (selectedSubject && date) {
             setStep(2);
@@ -108,7 +121,7 @@ export default function JurnalPage() {
     };
 
     return (
-        <div className="max-w-4xl mx-auto pb-20">
+        <div className="max-w-6xl mx-auto pb-20">
             {/* Step 1: Session Setup */}
             {step === 1 && (
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
@@ -202,7 +215,7 @@ export default function JurnalPage() {
                     {/* Session Type Toggle */}
                     <div className="grid grid-cols-2 gap-4 mb-8">
                         <button
-                            onClick={() => setSessionType('regular')}
+                            onClick={() => handleSessionTypeChange('regular')}
                             className={clsx(
                                 "flex items-center justify-center gap-3 p-4 rounded-xl border-2 transition-all",
                                 sessionType === 'regular'
@@ -220,7 +233,7 @@ export default function JurnalPage() {
                         </button>
 
                         <button
-                            onClick={() => setSessionType('review')}
+                            onClick={() => handleSessionTypeChange('review')}
                             className={clsx(
                                 "flex items-center justify-center gap-3 p-4 rounded-xl border-2 transition-all",
                                 sessionType === 'review'

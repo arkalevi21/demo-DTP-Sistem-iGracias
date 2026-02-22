@@ -223,7 +223,7 @@ export default function CompetitionPage() {
                     <div className="relative rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 shadow-2xl">
                         <div className="absolute inset-0 bg-gradient-to-r from-brand-red/90 to-brand-dark/50 z-10" />
                         <Image
-                            src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=1200"
+                            src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&q=80&w=1200"
                             alt="Competition"
                             fill
                             className="object-cover opacity-50"

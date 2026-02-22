@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Download, Calculator, DollarSign, Calendar, CheckCircle2 } from 'lucide-react';
+import { Download, Calculator, DollarSign, Calendar, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 import clsx from 'clsx';
 
-const HONOR_RATE = 300000; // IDR per session
 
 const PAYROLL_DATA = [
     { id: 1, mentor: 'John Wick', role: 'Mentor Industri', sessions: 4, bonus: 0 },
@@ -13,9 +12,12 @@ const PAYROLL_DATA = [
     { id: 4, mentor: 'Peter Parker', role: 'Asisten Mentor', sessions: 8, bonus: 50000 },
 ];
 
+const AVAILABLE_MONTHS = ['Januari 2026', 'Februari 2026', 'Maret 2026', 'April 2026', 'Mei 2026', 'Juni 2026'];
+
 export default function PayrollPage() {
-    const [selectedMonth, setSelectedMonth] = useState('Februari 2026');
-    const [honorRate, setHonorRate] = useState(300000); // Default based on new academic year
+    const [selectedMonthIndex, setSelectedMonthIndex] = useState(1); // Default Februari
+    const selectedMonth = AVAILABLE_MONTHS[selectedMonthIndex];
+    const [honorRate, setHonorRate] = useState(300000);
     const [showConfig, setShowConfig] = useState(false);
     const [isSyncing, setIsSyncing] = useState(false);
 
@@ -28,7 +30,7 @@ export default function PayrollPage() {
     };
 
     return (
-        <div className="max-w-4xl mx-auto space-y-8">
+        <div className="max-w-6xl mx-auto space-y-8">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-neutral-900">Laporan Penggajian Mentor</h1>
@@ -47,6 +49,27 @@ export default function PayrollPage() {
                         Export
                     </button>
                 </div>
+            </div>
+
+            {/* Month Navigation */}
+            <div className="flex items-center justify-center gap-2 bg-white px-4 py-2 rounded-xl border border-neutral-200 shadow-sm max-w-sm mx-auto">
+                <button
+                    onClick={() => setSelectedMonthIndex(prev => Math.max(0, prev - 1))}
+                    disabled={selectedMonthIndex === 0}
+                    className="p-2 hover:bg-neutral-100 rounded-lg text-neutral-500 hover:text-neutral-900 transition-colors disabled:opacity-30"
+                >
+                    <ChevronLeft className="h-5 w-5" />
+                </button>
+                <div className="flex-1 text-center font-bold text-lg text-neutral-900 flex items-center justify-center gap-2">
+                    <Calendar className="h-4 w-4 text-red-600" /> {selectedMonth}
+                </div>
+                <button
+                    onClick={() => setSelectedMonthIndex(prev => Math.min(AVAILABLE_MONTHS.length - 1, prev + 1))}
+                    disabled={selectedMonthIndex === AVAILABLE_MONTHS.length - 1}
+                    className="p-2 hover:bg-neutral-100 rounded-lg text-neutral-500 hover:text-neutral-900 transition-colors disabled:opacity-30"
+                >
+                    <ChevronRight className="h-5 w-5" />
+                </button>
             </div>
 
             {/* Admin Configuration Panel */}
@@ -89,7 +112,7 @@ export default function PayrollPage() {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-2xl border border-neutral-200 shadow-sm relative overflow-hidden group hover:border-blue-300 transition-all">
+                <div className="bg-white p-6 rounded-xl border border-neutral-200 shadow-sm relative overflow-hidden group hover:border-blue-300 transition-all">
                     <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                         <DollarSign className="h-24 w-24 text-blue-600" />
                     </div>
