@@ -283,18 +283,46 @@ export default function JurnalPage() {
                                                 )}
                                             </label>
                                             <div className="relative">
-                                                <input
-                                                    type="text"
+                                                <select
                                                     value={topic}
                                                     onChange={(e) => setTopic(e.target.value)}
-                                                    placeholder="Contoh: Fundamental React Hooks..."
                                                     className={clsx(
-                                                        "w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors",
+                                                        "w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors appearance-none bg-white text-sm",
                                                         isAutoFilled ? "border-amber-400 bg-amber-50/50" : "border-neutral-300"
                                                     )}
-                                                />
+                                                >
+                                                    <option value="">-- Pilih Topik dari Kurikulum --</option>
+                                                    {(() => {
+                                                        // Collect all unique topics from schedule data for the selected subject
+                                                        const allTopics: string[] = [];
+                                                        if (selectedSubject === 'Fiber Optic') {
+                                                            Object.values(INITIAL_FO_SCHEDULE).forEach(monthItems => {
+                                                                monthItems.forEach(item => {
+                                                                    if (!allTopics.includes(item.topic)) {
+                                                                        allTopics.push(item.topic);
+                                                                    }
+                                                                });
+                                                            });
+                                                        } else {
+                                                            // For other subjects, provide generic topic options
+                                                            allTopics.push(
+                                                                `Pengenalan ${selectedSubject}`,
+                                                                `Dasar-dasar ${selectedSubject}`,
+                                                                `Praktikum ${selectedSubject}`,
+                                                                `Project ${selectedSubject}`,
+                                                                `Review & Evaluasi ${selectedSubject}`
+                                                            );
+                                                        }
+                                                        return allTopics.map(t => (
+                                                            <option key={t} value={t}>{t}</option>
+                                                        ));
+                                                    })()}
+                                                </select>
+                                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-neutral-400">
+                                                    <ChevronLeft className="h-4 w-4 -rotate-90" />
+                                                </div>
                                                 {isAutoFilled && (
-                                                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                                    <div className="absolute right-8 top-1/2 -translate-y-1/2">
                                                         <Zap className="h-4 w-4 text-amber-500 animate-pulse" />
                                                     </div>
                                                 )}

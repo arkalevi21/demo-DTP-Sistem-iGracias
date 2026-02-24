@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, Briefcase, GraduationCap, Users, Edit3, Trash2, Check, X, BarChart3 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, Briefcase, GraduationCap, Users, Edit3, Trash2, Check, X, BarChart3, FileText, Link as LinkIcon, Upload } from 'lucide-react';
 import clsx from 'clsx';
 import { useSidebar } from '@/components/SidebarContext';
 import Image from 'next/image';
@@ -40,7 +40,11 @@ export default function PlannerPage() {
     const [showTeamModal, setShowTeamModal] = useState(false);
     const [showAddSubjectModal, setShowAddSubjectModal] = useState(false);
     const [newSubjectName, setNewSubjectName] = useState('');
-    const [newTopic, setNewTopic] = useState({ code: '', topic: '', goal: '', assessment: '', teacher: '', type: 'Internal', weeks: [] as number[] });
+    const [newTopic, setNewTopic] = useState({
+        code: '', topic: '', goal: '', assessment: '', assessmentScore: 80,
+        teacher: '', type: 'Internal', weeks: [] as number[],
+        materialUrl: '', materialType: 'link' as 'pdf' | 'link'
+    });
 
     const activeMonth = MONTHS[activeMonthIndex];
     const schedule = scheduleData[activeMonth] || [];
@@ -50,6 +54,13 @@ export default function PlannerPage() {
     // Filter Logic
     const isInternalUser = userRole === 'internal_mentor';
     const isIndustrialUser = userRole === 'industry_mentor';
+
+    // Filtered mentors for dropdown based on session type
+    const filteredMentors = ALL_MENTORS.filter(m => {
+        if (newTopic.type === 'Internal') return m.role === 'Internal';
+        if (newTopic.type === 'Industrial') return m.role === 'Industri';
+        return true;
+    });
 
     const handlePrevMonth = () => { if (activeMonthIndex > 0) setActiveMonthIndex(prev => prev - 1); };
     const handleNextMonth = () => { if (activeMonthIndex < MONTHS.length - 1) setActiveMonthIndex(prev => prev + 1); };
@@ -83,10 +94,16 @@ export default function PlannerPage() {
         e.preventDefault();
         const newItem: ScheduleItem = {
             id: Math.random().toString(36).substr(2, 9),
-            ...newTopic,
+            code: newTopic.code,
+            topic: newTopic.topic,
+            goal: newTopic.goal,
+            assessment: newTopic.assessment,
+            assessmentScore: newTopic.assessmentScore,
             teacher: newTopic.teacher || (userRole === 'industry_mentor' ? 'Mentor Industri' : 'Guru Internal'),
             type: newTopic.type as ScheduleType,
-            weeks: [1, 2, 3, 4] // Default all weeks for demo
+            weeks: [1, 2, 3, 4], // Default all weeks for demo
+            materialUrl: newTopic.materialUrl || undefined,
+            materialType: newTopic.materialUrl ? newTopic.materialType : undefined,
         };
 
         setScheduleData(prev => ({
@@ -94,7 +111,21 @@ export default function PlannerPage() {
             [activeMonth]: [...(prev[activeMonth] || []), newItem]
         }));
         setShowAddTopic(false);
-        setNewTopic({ code: '', topic: '', goal: '', assessment: '', teacher: '', type: 'Internal', weeks: [] });
+        setNewTopic({ code: '', topic: '', goal: '', assessment: '', assessmentScore: 80, teacher: '', type: 'Internal', weeks: [], materialUrl: '', materialType: 'link' });
+    };
+
+    // Score color helper
+    const scoreColor = (score?: number) => {
+        if (!score) return 'text-neutral-400';
+        if (score >= 85) return 'text-emerald-600';
+        if (score >= 70) return 'text-amber-600';
+        return 'text-red-600';
+    };
+    const scoreBg = (score?: number) => {
+        if (!score) return 'bg-neutral-50';
+        if (score >= 85) return 'bg-emerald-50';
+        if (score >= 70) return 'bg-amber-50';
+        return 'bg-red-50';
     };
 
     return (
@@ -273,6 +304,11 @@ export default function PlannerPage() {
                                         <span className={clsx("px-1.5 py-0.5 rounded text-[10px] font-bold border", item.type === 'Internal' ? "bg-blue-50 text-blue-700 border-blue-100" : "bg-orange-50 text-orange-700 border-orange-100")}>
                                             {item.type === 'Internal' ? 'Internal' : 'Industri'}
                                         </span>
+                                        {item.assessmentScore !== undefined && (
+                                            <span className={clsx("px-1.5 py-0.5 rounded text-[10px] font-bold", scoreBg(item.assessmentScore), scoreColor(item.assessmentScore))}>
+                                                {item.assessmentScore}/100
+                                            </span>
+                                        )}
                                     </div>
 
                                     <h3 className="text-sm font-bold text-neutral-900 mb-1">{item.topic}</h3>
@@ -298,7 +334,16 @@ export default function PlannerPage() {
                                         </div>
                                     </div>
 
-                                    <div className="mt-2 text-[10px] text-neutral-400 font-medium">Asesmen: {item.assessment}</div>
+                                    <div className="mt-2 flex items-center justify-between">
+                                        <div className="text-[10px] text-neutral-400 font-medium">Asesmen: {item.assessment}</div>
+                                        {item.materialUrl && (
+                                            <a href={item.materialUrl} target="_blank" rel="noopener noreferrer"
+                                                className="flex items-center gap-1 text-[10px] font-bold text-blue-600 hover:text-blue-700">
+                                                {item.materialType === 'pdf' ? <FileText className="h-3 w-3" /> : <LinkIcon className="h-3 w-3" />}
+                                                {item.materialType === 'pdf' ? 'PDF' : 'Link'}
+                                            </a>
+                                        )}
+                                    </div>
                                 </div>
                             );
                         })}
@@ -306,10 +351,12 @@ export default function PlannerPage() {
 
                     {/* Desktop Table View */}
                     <div className="hidden md:block bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden overflow-x-auto">
-                        <div className="min-w-[800px]">
-                            <div className="grid grid-cols-10 bg-neutral-50 border-b border-neutral-200 divide-x divide-neutral-200">
+                        <div className="min-w-[900px]">
+                            <div className="grid grid-cols-12 bg-neutral-50 border-b border-neutral-200 divide-x divide-neutral-200">
                                 <div className="col-span-4 px-6 py-4 text-xs font-bold text-neutral-500 uppercase tracking-wider">Materi & Capaian</div>
-                                <div className="col-span-2 px-6 py-4 text-xs font-bold text-neutral-500 uppercase tracking-wider text-center">Pengajar</div>
+                                <div className="col-span-1 px-2 py-4 text-xs font-bold text-neutral-500 uppercase tracking-wider text-center">Nilai</div>
+                                <div className="col-span-2 px-4 py-4 text-xs font-bold text-neutral-500 uppercase tracking-wider text-center">Pengajar</div>
+                                <div className="col-span-1 px-2 py-4 text-xs font-bold text-neutral-500 uppercase tracking-wider text-center">Materi</div>
                                 {[1, 2, 3, 4].map(w => <div key={w} className="col-span-1 px-2 py-4 text-center text-xs font-bold text-neutral-500 uppercase">Mg {w}</div>)}
                             </div>
 
@@ -319,7 +366,7 @@ export default function PlannerPage() {
                                     (isIndustrialUser && item.type === 'Industrial');
 
                                 return (
-                                    <div key={item.id} className={clsx("grid grid-cols-10 border-b border-neutral-100 divide-x divide-neutral-100 transition-colors group relative", !isRelevant && "opacity-40 grayscale bg-neutral-50")}>
+                                    <div key={item.id} className={clsx("grid grid-cols-12 border-b border-neutral-100 divide-x divide-neutral-100 transition-colors group relative", !isRelevant && "opacity-40 grayscale bg-neutral-50")}>
                                         {canEditContent && (
                                             <div className="absolute right-2 top-2 hidden group-hover:flex gap-1 z-10">
                                                 <button className="p-1 bg-white border border-neutral-200 rounded text-neutral-500 hover:text-blue-600"><Edit3 className="h-3 w-3" /></button>
@@ -339,6 +386,18 @@ export default function PlannerPage() {
                                             <div className="mt-2 text-[10px] text-neutral-400 font-medium">Asesmen: {item.assessment}</div>
                                         </div>
 
+                                        {/* Score Column */}
+                                        <div className="col-span-1 px-2 py-4 flex items-center justify-center">
+                                            {item.assessmentScore !== undefined ? (
+                                                <div className={clsx("px-2 py-1 rounded-lg text-center", scoreBg(item.assessmentScore))}>
+                                                    <p className={clsx("text-lg font-black", scoreColor(item.assessmentScore))}>{item.assessmentScore}</p>
+                                                    <p className="text-[9px] text-neutral-400">/100</p>
+                                                </div>
+                                            ) : (
+                                                <span className="text-xs text-neutral-300">—</span>
+                                            )}
+                                        </div>
+
                                         <div className="col-span-2 px-4 py-4 flex items-center justify-center text-center">
                                             <div>
                                                 <div className={clsx("h-8 w-8 rounded-full mx-auto mb-2 flex items-center justify-center text-xs text-white font-bold", item.type === 'Internal' ? "bg-blue-500" : "bg-orange-500")}>
@@ -346,6 +405,21 @@ export default function PlannerPage() {
                                                 </div>
                                                 <p className="text-xs font-medium text-neutral-700">{item.teacher}</p>
                                             </div>
+                                        </div>
+
+                                        {/* Material Column */}
+                                        <div className="col-span-1 px-2 py-4 flex items-center justify-center">
+                                            {item.materialUrl ? (
+                                                <a href={item.materialUrl} target="_blank" rel="noopener noreferrer"
+                                                    className={clsx("flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-neutral-50 transition-colors",
+                                                        item.materialType === 'pdf' ? "text-red-500 hover:text-red-600" : "text-blue-500 hover:text-blue-600"
+                                                    )}>
+                                                    {item.materialType === 'pdf' ? <FileText className="h-5 w-5" /> : <LinkIcon className="h-5 w-5" />}
+                                                    <span className="text-[9px] font-bold uppercase">{item.materialType === 'pdf' ? 'PDF' : 'Link'}</span>
+                                                </a>
+                                            ) : (
+                                                <span className="text-xs text-neutral-300">—</span>
+                                            )}
                                         </div>
 
                                         {[1, 2, 3, 4].map(week => (
@@ -370,7 +444,7 @@ export default function PlannerPage() {
             {/* 1. Add Topic Modal */}
             {showAddTopic && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 relative">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
                         <h2 className="text-xl font-bold text-neutral-900 mb-6">Input Materi Kurikulum Baru</h2>
                         <form onSubmit={handleAddTopicSubmit} className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
@@ -382,12 +456,25 @@ export default function PlannerPage() {
                                 <div>
                                     <label className="block text-xs font-bold text-neutral-500 mb-1">Tipe Sesi</label>
                                     <select className="w-full p-2 border rounded-lg text-sm focus:border-brand-red outline-none"
-                                        value={newTopic.type} onChange={e => setNewTopic({ ...newTopic, type: e.target.value })} >
+                                        value={newTopic.type} onChange={e => setNewTopic({ ...newTopic, type: e.target.value, teacher: '' })} >
                                         <option value="Internal">Rabu (Internal)</option>
                                         <option value="Industrial">Kamis (Industri)</option>
                                     </select>
                                 </div>
                             </div>
+
+                            {/* Teacher Dropdown (Revision 2) */}
+                            <div>
+                                <label className="block text-xs font-bold text-neutral-500 mb-1">Pengajar</label>
+                                <select required className="w-full p-2 border rounded-lg text-sm focus:border-brand-red outline-none"
+                                    value={newTopic.teacher} onChange={e => setNewTopic({ ...newTopic, teacher: e.target.value })}>
+                                    <option value="">-- Pilih Pengajar --</option>
+                                    {filteredMentors.map(m => (
+                                        <option key={m.id} value={m.name}>{m.name} ({m.role})</option>
+                                    ))}
+                                </select>
+                            </div>
+
                             <div>
                                 <label className="block text-xs font-bold text-neutral-500 mb-1">Topik Pembelajaran</label>
                                 <input required type="text" placeholder="Judul Materi..." className="w-full p-2 border rounded-lg text-sm focus:border-brand-red outline-none"
@@ -398,10 +485,45 @@ export default function PlannerPage() {
                                 <input required type="text" placeholder="Capaian siswa..." className="w-full p-2 border rounded-lg text-sm focus:border-brand-red outline-none"
                                     value={newTopic.goal} onChange={e => setNewTopic({ ...newTopic, goal: e.target.value })} />
                             </div>
+
+                            {/* Assessment with Score (Revision 1) */}
+                            <div className="grid grid-cols-3 gap-4">
+                                <div className="col-span-2">
+                                    <label className="block text-xs font-bold text-neutral-500 mb-1">Metode Asesmen</label>
+                                    <input required type="text" placeholder="Contoh: Tes Lisan, Project..." className="w-full p-2 border rounded-lg text-sm focus:border-brand-red outline-none"
+                                        value={newTopic.assessment} onChange={e => setNewTopic({ ...newTopic, assessment: e.target.value })} />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-neutral-500 mb-1">Nilai Target</label>
+                                    <div className="relative">
+                                        <input required type="number" min={0} max={100} placeholder="80"
+                                            className="w-full p-2 border rounded-lg text-sm focus:border-brand-red outline-none pr-10"
+                                            value={newTopic.assessmentScore} onChange={e => setNewTopic({ ...newTopic, assessmentScore: parseInt(e.target.value) || 0 })} />
+                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-400">/100</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Material Upload (Revision 4) */}
                             <div>
-                                <label className="block text-xs font-bold text-neutral-500 mb-1">Metode Asesmen</label>
-                                <input required type="text" placeholder="Contoh: Tes Lisan, Project..." className="w-full p-2 border rounded-lg text-sm focus:border-brand-red outline-none"
-                                    value={newTopic.assessment} onChange={e => setNewTopic({ ...newTopic, assessment: e.target.value })} />
+                                <label className="block text-xs font-bold text-neutral-500 mb-2">Lampiran Materi <span className="text-neutral-400 font-normal">(opsional)</span></label>
+                                <div className="flex items-center gap-3 mb-2">
+                                    <label className={clsx("flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium cursor-pointer transition-all",
+                                        newTopic.materialType === 'pdf' ? "bg-red-50 border-red-200 text-red-700" : "bg-white border-neutral-200 text-neutral-500 hover:border-red-200")}>
+                                        <input type="radio" name="materialType" value="pdf" checked={newTopic.materialType === 'pdf'}
+                                            onChange={() => setNewTopic({ ...newTopic, materialType: 'pdf' })} className="hidden" />
+                                        <FileText className="h-3.5 w-3.5" /> PDF / File
+                                    </label>
+                                    <label className={clsx("flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium cursor-pointer transition-all",
+                                        newTopic.materialType === 'link' ? "bg-blue-50 border-blue-200 text-blue-700" : "bg-white border-neutral-200 text-neutral-500 hover:border-blue-200")}>
+                                        <input type="radio" name="materialType" value="link" checked={newTopic.materialType === 'link'}
+                                            onChange={() => setNewTopic({ ...newTopic, materialType: 'link' })} className="hidden" />
+                                        <LinkIcon className="h-3.5 w-3.5" /> Link URL
+                                    </label>
+                                </div>
+                                <input type="url" placeholder={newTopic.materialType === 'pdf' ? "https://drive.google.com/file/..." : "https://docs.google.com/..."}
+                                    className="w-full p-2 border rounded-lg text-sm focus:border-brand-red outline-none"
+                                    value={newTopic.materialUrl} onChange={e => setNewTopic({ ...newTopic, materialUrl: e.target.value })} />
                             </div>
 
                             <div className="pt-4 flex items-center gap-3">
