@@ -84,12 +84,12 @@ export default function Home() {
 
           <div className="bg-gradient-to-br from-brand-red to-brand-dark p-6 rounded-xl text-white shadow-lg relative overflow-hidden">
             <div className="relative z-10">
-              <h3 className="font-bold text-xl mb-2">Siapkan Materi Bulan Depan</h3>
+              <h3 className="font-bold text-xl mb-2">Kelola Bidang & Materi DTP</h3>
               <p className="text-red-100 text-sm mb-6 max-w-sm">
-                Batas pengisian Monthly Planner adalah tanggal 25. Pastikan semua mentor telah submit.
+                Atur bidang pelajaran dan pastikan semua mentor sudah upload materi terbaru.
               </p>
-              <Link href="/planner" className="inline-flex items-center px-4 py-2 bg-white text-brand-red rounded-lg text-sm font-bold hover:bg-neutral-50 transition-colors">
-                Buka Monthly Planner
+              <Link href="/materials" className="inline-flex items-center px-4 py-2 bg-white text-brand-red rounded-lg text-sm font-bold hover:bg-neutral-50 transition-colors">
+                Lihat Semua Materi
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </div>
@@ -168,10 +168,10 @@ export default function Home() {
             <h4 className="font-bold text-neutral-900">Input Jurnal</h4>
             <p className="text-xs text-neutral-500">Catat sesi mengajar</p>
           </Link>
-          <Link href="/planner" className="bg-white p-4 rounded-xl border border-neutral-200 shadow-sm hover:border-red-500 hover:shadow-md transition-all group">
+          <Link href="/materials" className="bg-white p-4 rounded-xl border border-neutral-200 shadow-sm hover:border-red-500 hover:shadow-md transition-all group">
             <Calendar className="h-6 w-6 text-orange-600 mb-3 group-hover:scale-110 transition-transform" />
-            <h4 className="font-bold text-neutral-900">Planner Materi</h4>
-            <p className="text-xs text-neutral-500">Cek silabus tahunan</p>
+            <h4 className="font-bold text-neutral-900">Input Materi</h4>
+            <p className="text-xs text-neutral-500">Upload materi baru</p>
           </Link>
           <div className="bg-neutral-50 p-4 rounded-xl border border-dashed border-neutral-200 text-center flex flex-col items-center justify-center opacity-50 cursor-not-allowed">
             <p className="text-xs font-bold text-neutral-400">Fitur Lain coming soon</p>
@@ -278,7 +278,7 @@ export default function Home() {
               SEMESTER GENAP 2025/2026
             </span>
             <h1 className="text-3xl md:text-4xl font-bold mb-2">Semangat Pagi, Arka! 🚀</h1>
-            <p className="text-neutral-400 mb-6">Jangan lupa isi logbook hari ini dan cek jadwal materi terbaru.</p>
+            <p className="text-neutral-400 mb-6">Jangan lupa cek materi belajar terbaru dan beri skor pemahamanmu.</p>
 
             <div className="flex gap-3">
               <Link href="/portfolio" className="bg-brand-red text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-dark transition-colors shadow-lg shadow-red-900/50">

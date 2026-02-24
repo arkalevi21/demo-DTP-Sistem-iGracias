@@ -28,7 +28,8 @@ import { useSidebar, UserRole } from './SidebarContext';
 const MENUS: Record<UserRole, { name: string; href: string; icon: any }[]> = {
   admin: [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-    { name: 'Input Kurikulum', href: '/planner', icon: FileEdit },
+    { name: 'Kelola Bidang', href: '/planner', icon: FileEdit },
+    { name: 'Kelola Materi', href: '/materials', icon: BookOpen },
     { name: 'Student Mapping', href: '/students', icon: Users },
     { name: 'Presensi', href: '/attendance', icon: CheckSquare },
     { name: 'Laporan Bidang', href: '/reports', icon: BarChart3 },
@@ -37,16 +38,16 @@ const MENUS: Record<UserRole, { name: string; href: string; icon: any }[]> = {
   ],
   industry_mentor: [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+    { name: 'Input Materi', href: '/materials', icon: FileEdit },
     { name: 'Jadwal Mengajar', href: '/schedule', icon: ClipboardList },
     { name: 'Jurnal Mengajar', href: '/jurnal', icon: BookOpen },
     { name: 'Riwayat Jurnal', href: '/jurnal/history', icon: History },
-    { name: 'Planning Materi', href: '/planner', icon: Calendar },
     { name: 'Payroll Saya', href: '/payroll', icon: DollarSign },
     { name: 'Galeri Karya', href: '/gallery', icon: ImageIcon },
   ],
   internal_mentor: [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-    { name: 'Planning Materi', href: '/planner', icon: Calendar },
+    { name: 'Input Materi', href: '/materials', icon: FileEdit },
     { name: 'Jadwal Mengajar', href: '/schedule', icon: ClipboardList },
     { name: 'Monitoring Siswa', href: '/students', icon: Users },
     { name: 'Presensi', href: '/attendance', icon: CheckSquare },
@@ -58,9 +59,10 @@ const MENUS: Record<UserRole, { name: string; href: string; icon: any }[]> = {
   ],
   student: [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+    { name: 'Materi Belajar', href: '/materials', icon: BookOpen },
     { name: 'Jadwal Saya', href: '/schedule', icon: ClipboardList },
     { name: 'Presensi Saya', href: '/attendance', icon: CheckSquare },
-    { name: 'Galeri Sekolah', href: '/gallery', icon: BookOpen },
+    { name: 'Galeri Sekolah', href: '/gallery', icon: ImageIcon },
     { name: 'Kelola Portofolio', href: '/portfolio', icon: ImageIcon },
     { name: 'Lomba & Project', href: '/competition', icon: Award },
   ]
