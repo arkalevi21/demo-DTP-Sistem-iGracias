@@ -1,19 +1,19 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
     ArrowLeft, FileText, Video, BookOpen, Link as LinkIcon,
-    Star, Calendar, User, Clock, CheckCircle2, Users,
-    ChevronRight, ExternalLink
+    Star, Calendar, User, Clock, Users,
+    ExternalLink
 } from 'lucide-react';
 import clsx from 'clsx';
 import Image from 'next/image';
 import { useSidebar } from '@/components/SidebarContext';
 import {
     MOCK_MATERIALS, MOCK_SCORES, SCORE_LABELS, SCORE_EMOJIS,
-    getLearnerPace, getLearnerPaceColor, ComprehensionScore
+    getLearnerPace, getLearnerPaceColor
 } from '@/data/materials';
 
 export default function MaterialDetailPage() {
@@ -25,42 +25,16 @@ export default function MaterialDetailPage() {
     const isStudent = userRole === 'student';
     const isTeacher = userRole === 'internal_mentor' || userRole === 'industry_mentor' || userRole === 'admin';
 
-    // Score state
-    const [allScores, setAllScores] = useState<ComprehensionScore[]>(MOCK_SCORES);
-    const [selectedScore, setSelectedScore] = useState<number | null>(null);
-    const [hasSubmitted, setHasSubmitted] = useState(false);
-
+    // Score data (read-only for display)
     const materialScores = useMemo(() =>
-        allScores.filter(s => s.materialId === materialId),
-        [allScores, materialId]
+        MOCK_SCORES.filter(s => s.materialId === materialId),
+        [materialId]
     );
 
     const avgScore = useMemo(() => {
         if (materialScores.length === 0) return 0;
         return materialScores.reduce((s, c) => s + c.score, 0) / materialScores.length;
     }, [materialScores]);
-
-    // Current logged-in student for demo: Arka Levi (studentId '10')
-    const currentStudentId = '10';
-    const existingStudentScore = useMemo(() =>
-        materialScores.find(s => s.studentId === currentStudentId),
-        [materialScores]
-    );
-
-    const handleSubmitScore = () => {
-        if (!selectedScore) return;
-        const newScore: ComprehensionScore = {
-            id: `s-${Date.now()}`,
-            materialId,
-            studentId: currentStudentId,
-            studentName: 'Arka Levi',
-            studentClass: 'XI DTP 1',
-            score: selectedScore,
-            submittedAt: new Date().toISOString(),
-        };
-        setAllScores(prev => [...prev, newScore]);
-        setHasSubmitted(true);
-    };
 
     if (!material) {
         return (
@@ -184,58 +158,6 @@ export default function MaterialDetailPage() {
                 {renderPreview()}
             </div>
 
-            {/* === STUDENT: Comprehension Scoring === */}
-            {isStudent && (
-                <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-5 md:p-6 mb-6">
-                    <h2 className="text-base font-bold text-neutral-900 mb-1 flex items-center gap-2">
-                        <Star className="h-5 w-5 text-amber-400" />
-                        Skor Pemahaman
-                    </h2>
-                    <p className="text-xs text-neutral-500 mb-4">
-                        Seberapa paham kamu dengan materi ini? Jawaban kamu akan membantu guru memahami kebutuhanmu.
-                    </p>
-
-                    {(hasSubmitted || existingStudentScore) ? (
-                        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-center">
-                            <CheckCircle2 className="h-8 w-8 text-emerald-500 mx-auto mb-2" />
-                            <p className="text-sm font-bold text-emerald-800">Skor sudah dikirim!</p>
-                            <p className="text-xs text-emerald-600 mt-1">
-                                Kamu memberi skor <strong>{hasSubmitted ? selectedScore : existingStudentScore?.score}/5</strong> —{' '}
-                                {SCORE_LABELS[hasSubmitted ? selectedScore! : existingStudentScore!.score]}
-                            </p>
-                        </div>
-                    ) : (
-                        <div>
-                            {/* Score Selector */}
-                            <div className="grid grid-cols-5 gap-2 mb-4">
-                                {[1, 2, 3, 4, 5].map(score => (
-                                    <button
-                                        key={score}
-                                        onClick={() => setSelectedScore(score)}
-                                        className={clsx(
-                                            "p-3 rounded-xl border-2 text-center transition-all",
-                                            selectedScore === score
-                                                ? "border-brand-red bg-brand-red/5 shadow-md scale-105"
-                                                : "border-neutral-200 hover:border-neutral-400 bg-white"
-                                        )}
-                                    >
-                                        <span className="text-2xl block mb-1">{SCORE_EMOJIS[score]}</span>
-                                        <span className="text-lg font-black text-neutral-900">{score}</span>
-                                        <p className="text-[9px] font-bold text-neutral-500 mt-0.5 leading-tight">{SCORE_LABELS[score]}</p>
-                                    </button>
-                                ))}
-                            </div>
-                            <button
-                                onClick={handleSubmitScore}
-                                disabled={!selectedScore}
-                                className="w-full py-3 bg-brand-red text-white font-bold rounded-xl shadow-lg shadow-red-200 hover:bg-brand-dark transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                            >
-                                Kirim Skor Pemahaman
-                            </button>
-                        </div>
-                    )}
-                </div>
-            )}
 
             {/* === TEACHER: Comprehension Results === */}
             {isTeacher && materialScores.length > 0 && (
